@@ -13,6 +13,7 @@
 from __future__ import absolute_import
 
 import inspect
+import os
 
 import pytest as pytest
 
@@ -56,3 +57,15 @@ def test_error_wrapper_exception():
     with pytest.raises(NotImplementedError) as e:
         _functions.error_wrapper(lambda x: x, NotImplementedError)(2, 3)
     assert type(e.value.args[0]) == TypeError
+
+
+@pytest.mark.parametrize(
+    "p, expected",
+    [
+        ("one", ("one",)),
+        (os.path.join("one", "two"), ("one", "two")),
+        ("", ("",)),
+    ]
+)
+def test_split_paths(p, expected):
+    assert _functions.split_paths(p) == expected

@@ -23,6 +23,8 @@ import six
 
 from sagemaker_containers import _entry_point_type, _env, _errors, _logging
 
+from src.sagemaker_containers._functions import split_paths
+
 
 def create(cmd, error_class, cwd=None, capture_error=False, **kwargs):
     """Create subprocess.Popen object for the given command.
@@ -132,6 +134,7 @@ class ProcessRunner(object):
 
         if entrypoint_type is _entry_point_type.PYTHON_PACKAGE:
             entry_module = self._user_entry_point.replace(".py", "")
+            entry_module = ".".join(split_paths(entry_module))
             return self._python_command() + ["-m", entry_module] + self._args
         elif entrypoint_type is _entry_point_type.PYTHON_PROGRAM:
             return self._python_command() + [self._user_entry_point] + self._args

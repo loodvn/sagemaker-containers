@@ -14,8 +14,9 @@
 from __future__ import absolute_import
 
 import inspect
+import os
 import sys
-from typing import Callable
+from typing import Callable, Tuple
 
 import six
 
@@ -95,3 +96,20 @@ def error_wrapper(fn, error_class):  # type: (Callable or None, Exception) -> ..
             six.reraise(error_class, error_class(e), sys.exc_info()[2])
 
     return wrapper
+
+
+def split_paths(p):  # type: (str) -> Tuple[str, ...]
+    """Iteratively os.path.split on a given string.
+    e.g. split_paths("one/two/three") -> ("one", "two", "three")
+
+    Args:
+        p (str): Path
+
+    Returns:
+        Tuple of strings
+    """
+    paths = os.path.split(p)
+    # os.path.split("leaf") returns ("", "leaf")
+    while paths[0] != "":
+        paths = os.path.split(paths[0]) + paths[1:]
+    return paths[1:]
